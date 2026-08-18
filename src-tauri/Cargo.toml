@@ -1,0 +1,36 @@
+[package]
+name = "digibox-desktop"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+build = "build.rs"
+
+[lib]
+name = "avtr1_desktop"
+path = "src/lib.rs"
+
+[dependencies]
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2.11", features = [] }
+tauri-plugin-dialog = "2.7"
+tauri-plugin-opener = "2"
+tauri-plugin-single-instance = "2"
+tokio = { version = "1", features = ["fs", "io-util", "macros", "process", "rt-multi-thread", "sync", "time"] }
+url = "2"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = [
+  "Win32_Foundation",
+  "Win32_Security",
+  "Win32_System_Diagnostics_ToolHelp",
+  "Win32_System_JobObjects",
+  "Win32_System_Threading",
+] }
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["net"] }

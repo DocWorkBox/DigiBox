@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'" />
+  <title>DigiBox 正在启动</title>
+  <link rel="stylesheet" href="./splash.css" />
+</head>
+<body>
+  <main class="shell">
+    <div class="halo" aria-hidden="true"></div>
+    <section class="card" aria-live="polite">
+      <div class="brand"><span class="brand-dot"></span>DigiBox</div>
+      <h1 id="title">正在准备数字人运行环境</h1>
+      <p id="message">请稍候，首次启动可能需要加载 GPU 模型。</p>
+      <div class="progress"><span></span></div>
+      <dl id="details" hidden>
+        <div><dt>Runtime</dt><dd id="runtime">—</dd></div>
+        <div><dt>模式</dt><dd id="runtime-mode">—</dd></div>
+      </dl>
+      <pre id="error" hidden></pre>
+      <div class="actions">
+        <button id="retry" type="button" hidden>重新检查</button>
+        <button id="select-runtime" class="secondary" type="button" hidden>选择 Runtime</button>
+        <button id="open-logs" class="secondary" type="button">打开日志</button>
+      </div>
+    </section>
+  </main>
+  <script src="./splash.js"></script>
+</body>
+</html>

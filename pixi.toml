@@ -1,0 +1,113 @@
+[workspace]
+channels = ["https://prefix.dev/conda-forge"]
+name = "avtr1-live-talkinghead"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[system-requirements]
+cuda = "12.8"
+
+[tasks]
+hf-login         = { cmd = "hf auth login", description = "Log in to HuggingFace (required before downloading artifacts)" }
+download         = { cmd = "python scripts/download_artifacts.py", description = "Download all model artifacts from HuggingFace", depends-on = ["hf-login"] }
+generate_offline = { cmd = "python scripts/generate_offline.py", description = "Run end-to-end offline generation (requires built engines)" }
+
+[dependencies]
+python = "==3.12"
+anyio = "==4.11.0"
+numpy = "==2.0"
+einops = ">=0.8.1,<0.9"
+
+[feature.dev.dependencies]
+cuda-nvcc = ">=12.9.86,<13"
+pytest = ">=8.3,<9"
+ruff = ">=0.13,<0.14"
+ffmpeg = "6.*"
+
+[feature.dev.pypi-dependencies]
+basedpyright = ">=1.22,<2"
+
+[feature.dev.tasks]
+test = { cmd = "pytest", description = "Run tests" }
+lint = { cmd = "ruff check", description = "Lint with ruff" }
+format = { cmd = "ruff format", description = "Format with ruff" }
+typecheck = { cmd = "basedpyright", description = "Type-check with basedpyright" }
+
+[pypi-dependencies]
+avtr1-renderer = { path = ".", editable = true }
+torch = { version = ">=2.5.1,<2.8", index = "https://download.pytorch.org/whl/cu128" }
+tensorrt = "<=10.12"
+huggingface_hub = ">=0.30,<1"
+imageio = ">=2.37.0,<3"
+imageio-ffmpeg = ">=0.6.0,<0.7"
+opencv-python-headless = ">=4.11.0.86,<5"
+tqdm = ">=4.67.1,<5"
+attrs = ">=25.3.0,<26"
+tenacity = ">=9.1.2,<10"
+kornia = ">=0.8.1,<0.9"
+scikit-image = ">=0.25.2,<0.26"
+soxr = ">=0.4.0,<0.5"
+roma = ">=1.5.4,<2"
+onnxruntime-gpu = ">=1.20"
+av = ">=17.0.1,<18"
+soundfile = ">=0.13.1,<0.14"
+safetensors = ">=0.5,<1"
+httpx = ">=0.28,<0.29"
+fastapi = ">=0.116,<0.117"
+uvicorn = ">=0.35,<0.36"
+python-multipart = ">=0.0.20,<0.0.21"
+pillow = ">=12,<13"
+
+# Build-time only (needed when compiling TRT engines with scripts/build_*.py)
+[feature.build.tasks]
+build-trt-engines = { cmd = "python scripts/build_engines.py", description = "Build all TRT engines (run after download)" }
+build-trt-engines-avtr1 = { cmd = "python scripts/build_avtr1_engines.py", description = "Build AVTR-1 TRT engines (required)" }
+build-trt-engines-renderer = { cmd = "python scripts/build_renderer_engines.py", description = "Build renderer TRT engines (required)" }
+build-trt-engines-hubert = { cmd = "python scripts/build_hubert_engine.py", description = "Build HuBERT TRT engine (required)" }
+
+[feature.build.pypi-dependencies]
+onnx = ">=1.17,<2"
+onnx-graphsurgeon = ">=0.5"
+
+[feature.build.dependencies]
+cuda-nvcc = ">=12.9.86,<13"
+
+# Localrtc streamer environment. Independent solve-group + no-default-feature
+# so it does NOT inherit the renderer's heavy pypi-dependencies (torch, tensorrt,
+# cuda-python, kornia, ...). Pixi materializes a separate per-env venv. The
+# editable install of this project root is repeated here so the
+# avaturn_live_streamer package becomes importable in the streamer venv.
+[feature.streamer.dependencies]
+python = "==3.12"
+
+[feature.streamer.tasks]
+interactive-demo = { cmd = "python scripts/run_local_stream.py", description = "Run the interactive WebRTC streaming demo" }
+
+[feature.streamer.pypi-dependencies]
+avtr1-renderer = { path = ".", editable = true }
+
+fastapi = ">=0.111.0"
+uvicorn = ">=0.30.6"
+numpy = ">=2.1.1"
+pydantic-settings = ">=2.10.1"
+httpx = ">=0.26.0"
+openai = ">=1.58.1"
+tenacity = ">=8.3.0"
+asyncstdlib = ">=3.12.4"
+typeid-python = ">=0.3.1"
+structlog = ">=24.4.0"
+attrs = ">=24.2.0"
+typer = ">=0.12.5"
+soxr = ">=0.5.0.post1"
+websockets = ">=14.0"
+opentelemetry-api = ">=1.20"
+aiortc = ">=1.9.0"
+av = ">=12.0.0"
+anyio = ">=4.0"
+uuid6 = "*"
+
+[environments]
+# `renderer` is listed first → pixi treats it as the default environment.
+renderer = { features = ["dev", "build"], solve-group = "renderer" }
+streamer = { features = ["streamer"], solve-group = "streamer", no-default-feature = true }
+# Modified by DigiBox contributors for native Windows and portable runtime support.

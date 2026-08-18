@@ -1,0 +1,34 @@
+appId: live.avaturn.avtr1.desktop
+productName: DigiBox
+copyright: Copyright © 2026 DigiBox contributors
+asar: true
+directories:
+  output: desktop/dist
+files:
+  - desktop/**/*.cjs
+  - desktop/**/*.html
+  - desktop/**/*.css
+  - desktop/**/*.js
+  - package.json
+  - LICENSE.md
+  - LICENSE-MODEL.md
+  - LICENSE-RENDERER.md
+  - LICENSE-STREAMER.md
+  - PATENTS.md
+  - THIRD-PARTY-NOTICES.md
+win:
+  icon: src-tauri/icons/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+  requestedExecutionLevel: asInvoker
+  artifactName: DigiBox-Setup-${version}-${arch}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: DigiBox
+  deleteAppDataOnUninstall: false

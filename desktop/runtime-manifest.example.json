@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 2,
+  "layout": "portable-v2",
+  "platform": "win32",
+  "arch": "x64",
+  "runtimeId": "avtr1-0.1.0-win64",
+  "paths": {
+    "python": "python/python.exe",
+    "orchestrator": "scripts/run_local_stream.py",
+    "source": "src",
+    "artifacts": "artifacts/main",
+    "models": "models"
+  },
+  "python": {
+    "version": "3.12.9",
+    "packageLayers": {
+      "main": [
+        "packages/main",
+        "packages/shared",
+        "src"
+      ],
+      "cosyvoice": [
+        "packages/cosyvoice",
+        "packages/shared",
+        "third_party/CosyVoice",
+        "third_party/CosyVoice/third_party/Matcha-TTS",
+        "src"
+      ],
+      "feynobg": [
+        "packages/feynobg",
+        "packages/shared",
+        "src"
+      ]
+    }
+  },
+  "components": {
+    "dependenciesIncluded": true,
+    "modelsIncluded": true,
+    "frontendVendorIncluded": true,
+    "tensorRtBuildInputsIncluded": true
+  },
+  "tensorrt": {
+    "version": "10.11.0.33",
+    "cudaMajor": 12,
+    "computeCapability": null,
+    "engines": []
+  }
+}

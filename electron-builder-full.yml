@@ -1,0 +1,61 @@
+appId: live.avaturn.avtr1.desktop
+productName: DigiBox
+copyright: Copyright © 2026 DigiBox contributors
+asar: true
+directories:
+  output: desktop/dist-full
+files:
+  - desktop/**/*.cjs
+  - desktop/**/*.html
+  - desktop/**/*.css
+  - desktop/**/*.js
+  - package.json
+  - LICENSE.md
+  - LICENSE-MODEL.md
+  - LICENSE-RENDERER.md
+  - LICENSE-STREAMER.md
+  - PATENTS.md
+  - THIRD-PARTY-NOTICES.md
+extraResources:
+  - from: "${env.AVTR_PORTABLE_RUNTIME_SOURCE}"
+    to: avtr-runtime
+    filter:
+      - "**/*"
+      - "!**/*.engine"
+      - "!**/*.plan"
+      - "!**/*grid_sample_3d_plugin*.dll"
+      - "!**/user_assets/**"
+      - "!artifacts/main/avatars_artifacts/backgrounds/**"
+      - "!**/local_voices/**"
+      - "!**/voice_clones/**"
+      - "!**/reference_audio/**"
+      - "!**/.trash/**"
+      - "!**/spk2info.pt"
+      - "!**/.cache/**"
+      - "!**/__pycache__/**"
+      - "!**/.pytest_cache/**"
+      - "!**/.ruff_cache/**"
+      - "!**/.engine-staging/**"
+      - "!**/.engine-backups/**"
+      - "!**/.env"
+      - "!**/.env.*"
+      - "!**/*.key"
+      - "!src/**/*.pem"
+      - "!scripts/**/*.pem"
+      - "!artifacts/**/*.pem"
+      - "!models/**/*.pem"
+      - "!third_party/**/*.pem"
+      - "!*.pem"
+      - "!**/.avtr-portable-runtime.json"
+      - "!**/*.incomplete"
+      - "!**/*.metadata"
+  # TensorRT helper files are part of the validated staged Runtime above.
+  # Do not add overlapping FileSets: electron-builder copies them concurrently.
+win:
+  icon: src-tauri/icons/icon.ico
+  target:
+    - target: zip
+      arch:
+        - x64
+  requestedExecutionLevel: asInvoker
+  artifactName: DigiBox-Full-${version}-${arch}.${ext}

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "avtr1-renderer"
+version = "0.1.0"
+description = "Avaturn live face-renderer pipeline."
+requires-python = ">=3.12"
+# Runtime dependencies are managed by pixi.toml — this list is left
+# empty so an editable install via `pixi install` doesn't fight the
+# pixi-resolved environment.
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["avtr1_renderer*", "avaturn_live_streamer*"]
+
+[tool.setuptools.package-data]
+avtr1_renderer = ["assets/*.png"]
+# Modified by DigiBox contributors for the downstream DigiBox package.

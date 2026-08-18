@@ -1,0 +1,28 @@
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "B",     # flake8-bugbear
+    "UP",    # pyupgrade
+    "N",     # pep8-naming
+    "SIM",   # flake8-simplify
+    "RUF",   # ruff-specific
+]
+ignore = [
+    "E501",  # line length — handled by formatter
+]
+
+[lint.per-file-ignores]
+"tests/**" = ["N802", "N803", "N806"]  # allow snake_case test fixtures + math-notation locals
+# Math notation (M_c2o, KPInfo.R, x_d, etc.) is more readable than snake_case
+# in the runtime/component code; the tradeoff is intentional.
+"src/avatun_renderer/**" = ["N802", "N803", "N806", "N812"]
+
+[format]
+docstring-code-format = true

@@ -1,0 +1,110 @@
+# Modified by DigiBox contributors for native Windows development and release hygiene.
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments / pixi
+.pixi/
+.venv/
+.venv-*/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Type stubs (generated)
+typings/
+
+# Test / coverage
+.pytest_cache/
+.pytest*/
+.ruff_cache/
+test-results/
+test-temp-*/
+.coverage
+htmlcov/
+
+# Output videos / images
+*.mp4
+*.avi
+*.mov
+*.png
+!src/avtr1_renderer/assets/theme_*.png
+!src/avtr1_renderer/assets/tech_particles_dark.png
+!src-tauri/icons/*.png
+*.jpg
+*.jpeg
+
+# Model cache — engines are built locally, not committed
+~/.cache/avaturn/
+
+# Local artifact storage — large binaries, not for version control
+avaturn_storage/
+artifact_storage/
+artifacts/
+
+# Internal artifact tracker files from the old S3 downloader
+_metadata
+
+# HuggingFace cache (typically in HOME, but in case it's local)
+.cache/huggingface/
+.downloads/
+.uv-cache*/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Locks (pixi.lock is committed; others are not)
+*.lock
+!pixi.lock
+!package-lock.json
+!src-tauri/Cargo.lock
+
+# Electron desktop dependencies and build output
+node_modules/
+desktop/dist/
+desktop/staging/
+desktop/dist-tauri/
+desktop/builds/
+src-tauri/target/
+src-tauri/gen/
+src-tauri/icons/android/
+src-tauri/icons/ios/
+
+# Local runtime, model, generated output, and publication staging
+models/
+output/
+avtr-1/
+.tmp/
+.publish/
+.worktrees/
+*.zip
+*.7z
+*.whl
+*.exe
+*.msi
+
+# Internal scripts — not for public repo
+scripts/upload_to_hf.py
+
+# Local secrets / env files — never commit
+.env
+.env.*
+*.env
+!*.env.example
+
+# Misc
+.DS_Store
+*.log
+*.tmp

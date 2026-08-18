@@ -1,0 +1,7 @@
+# Isolated optional FeyNoBg worker.  Install torch/torchvision first from the
+# matching official PyTorch CPU or cu128 index (see setup_feynobg_windows.ps1).
+nobg==0.2.5
+fastapi==0.116.2
+uvicorn==0.35.0
+python-multipart==0.0.20
+pillow>=11.0,<12

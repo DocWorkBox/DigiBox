@@ -1,0 +1,4 @@
+# Optional native Windows TensorRT runtime and Python builder bindings.
+# The C++ headers/import libraries required for the custom warp plugin come
+# from the matching NVIDIA TensorRT 10.11 Windows ZIP SDK.
+tensorrt-cu12==10.11.0.33

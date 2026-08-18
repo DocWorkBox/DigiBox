@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "DigiBox",
+  "version": "0.1.0",
+  "identifier": "live.avaturn.avtr1.desktop",
+  "build": {
+    "frontendDist": "../desktop/tauri"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "splash",
+        "title": "DigiBox 正在启动",
+        "url": "index.html",
+        "width": 760,
+        "height": 560,
+        "minWidth": 680,
+        "minHeight": 500,
+        "resizable": true,
+        "fullscreen": false,
+        "visible": true
+      },
+      {
+        "label": "main",
+        "title": "DigiBox",
+        "url": "http://127.0.0.1:7860/",
+        "create": false,
+        "width": 1440,
+        "height": 900,
+        "minWidth": 900,
+        "minHeight": 620,
+        "resizable": true,
+        "fullscreen": false,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "DigiBox",
+    "category": "Utility",
+    "shortDescription": "DigiBox Windows 数字人桌面端",
+    "longDescription": "DigiBox 原生 Windows 数字人桌面壳和 Runtime 启动器。",
+    "resources": [
+      "../LICENSE.md",
+      "../LICENSE-MODEL.md",
+      "../LICENSE-RENDERER.md",
+      "../LICENSE-STREAMER.md",
+      "../PATENTS.md",
+      "../THIRD-PARTY-NOTICES.md"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "offlineInstaller"
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "installerIcon": "icons/icon.ico",
+        "uninstallerIcon": "icons/icon.ico",
+        "displayLanguageSelector": true,
+        "languages": ["SimpChinese", "English"]
+      }
+    }
+  }
+}

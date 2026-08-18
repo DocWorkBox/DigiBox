@@ -1,0 +1,129 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 45b5c36..917726d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -20,12 +20,34 @@ file(GLOB CU_SOURCE "./src/*.cu")
+ 
+ message(STATUS "CUDAToolkit_INCLUDE_DIRS: ${CUDAToolkit_INCLUDE_DIRS}")
+ 
+-add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
++if(NOT TensorRT_INCLUDE_DIR OR NOT TensorRT_LIBRARY)
++    message(FATAL_ERROR "Set TensorRT_INCLUDE_DIR and TensorRT_LIBRARY")
++endif()
+ 
+-target_include_directories(${PROJECT_NAME} PRIVATE "./src" ${CUDAToolkit_INCLUDE_DIRS})
+-target_link_libraries(${PROJECT_NAME} PRIVATE nvinfer)
++add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
+ 
+-set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "70;80;86;89")
++target_include_directories(
++    ${PROJECT_NAME}
++    PRIVATE "./src" ${CUDAToolkit_INCLUDE_DIRS} ${TensorRT_INCLUDE_DIR}
++)
++target_link_libraries(${PROJECT_NAME} PRIVATE "${TensorRT_LIBRARY}" CUDA::cudart)
++
++if(WIN32)
++    target_sources(
++        ${PROJECT_NAME}
++        PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/grid_sample_3d_plugin.def"
++    )
++endif()
+ 
+-add_subdirectory(test)
+-enable_testing()
+\ No newline at end of file
++set_target_properties(
++    ${PROJECT_NAME}
++    PROPERTIES
++    CUDA_RUNTIME_LIBRARY Shared
++    PREFIX ""
++)
++
++option(GRID_SAMPLE_BUILD_TESTS "Build plugin tests" OFF)
++if(GRID_SAMPLE_BUILD_TESTS)
++    add_subdirectory(test)
++    enable_testing()
++endif()
+diff --git a/grid_sample_3d_plugin.def b/grid_sample_3d_plugin.def
+new file mode 100644
+index 0000000..8eb77d0
+--- /dev/null
++++ b/grid_sample_3d_plugin.def
+@@ -0,0 +1,4 @@
++LIBRARY grid_sample_3d_plugin
++EXPORTS
++    getCreators
++    setLoggerFinder
+diff --git a/src/grid_sample_3d.cu b/src/grid_sample_3d.cu
+index 5e3aeda..ac96a4e 100644
+--- a/src/grid_sample_3d.cu
++++ b/src/grid_sample_3d.cu
+@@ -229,7 +229,7 @@ int grid_sample_3d_cuda(
+         printf("Error in grid_sample_3d_cuda: %s\n", cudaGetErrorString(err));
+     }
+ 
+-    return cudaGetLastError() != cudaSuccess;
++    return err != cudaSuccess;
+ }
+ 
+ // template specialization
+diff --git a/src/grid_sample_3d_plugin.cpp b/src/grid_sample_3d_plugin.cpp
+index 38a873f..d17119c 100644
+--- a/src/grid_sample_3d_plugin.cpp
++++ b/src/grid_sample_3d_plugin.cpp
+@@ -184,26 +184,49 @@ int32_t GridSample3DPlugin::enqueue(PluginTensorDesc const* inputDesc,
+                                     void* const* outputs, 
+                                     void* workspace, 
+                                     cudaStream_t stream) noexcept{
++    const Dims& inputDims = inputDesc[0].dims;
++    const Dims& gridDims = inputDesc[1].dims;
++    if (inputDims.nbDims != 5 || gridDims.nbDims != 5 ||
++        inputDims.d[0] <= 0 || inputDims.d[1] <= 0 || inputDims.d[2] <= 0 ||
++        inputDims.d[3] <= 0 || inputDims.d[4] <= 0 ||
++        gridDims.d[0] != inputDims.d[0] || gridDims.d[1] <= 0 ||
++        gridDims.d[2] <= 0 || gridDims.d[3] <= 0 || gridDims.d[4] != 3) {
++        return 1;
++    }
++
++    // configurePlugin() receives wildcard dimensions during TensorRT's build
++    // phase. Always use the concrete descriptors supplied to enqueue() so a
++    // dynamic profile (for example batch 1..5) cannot launch a kernel with a
++    // cached -1 or a different profiled batch size.
++    const size_t batch = static_cast<size_t>(inputDims.d[0]);
++    const size_t inputChannel = static_cast<size_t>(inputDims.d[1]);
++    const size_t inputDepth = static_cast<size_t>(inputDims.d[2]);
++    const size_t inputHeight = static_cast<size_t>(inputDims.d[3]);
++    const size_t inputWidth = static_cast<size_t>(inputDims.d[4]);
++    const size_t gridDepth = static_cast<size_t>(gridDims.d[1]);
++    const size_t gridHeight = static_cast<size_t>(gridDims.d[2]);
++    const size_t gridWidth = static_cast<size_t>(gridDims.d[3]);
++
+     int status = -1;                                
+-    if(mDataType == DataType::kFLOAT) {
++    if(inputDesc[0].type == DataType::kFLOAT) {
+         status = grid_sample_3d_cuda<float>(
+             static_cast<const float*>(inputs[0]),
+             static_cast<const float*>(inputs[1]),
+-            mBatch, mInputChannel, mInputDepth, mInputHeight, mInputWidth,
+-            mGridDepth, mGridHeight, mGridWidth,
++            batch, inputChannel, inputDepth, inputHeight, inputWidth,
++            gridDepth, gridHeight, gridWidth,
+             mAlignCorners,
+             mInterpolationMode,
+             mPaddingMode,
+             static_cast<float*>(outputs[0]),
+             stream
+         );
+-    } else if(mDataType == DataType::kHALF) {
++    } else if(inputDesc[0].type == DataType::kHALF) {
+     // } else {
+         status = grid_sample_3d_cuda<half>(
+             static_cast<const half*>(inputs[0]),
+             static_cast<const half*>(inputs[1]),
+-            mBatch, mInputChannel, mInputDepth, mInputHeight, mInputWidth,
+-            mGridDepth, mGridHeight, mGridWidth,
++            batch, inputChannel, inputDepth, inputHeight, inputWidth,
++            gridDepth, gridHeight, gridWidth,
+             mAlignCorners,
+             mInterpolationMode,
+             mPaddingMode,

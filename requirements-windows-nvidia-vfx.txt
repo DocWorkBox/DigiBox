@@ -1,0 +1,4 @@
+# Optional official NVIDIA VFX Python runtime for RTX Video Super Resolution.
+# Pin the exact official Windows wheel and NVIDIA-published SHA256. This avoids
+# resolving the small public-PyPI redirect package before reaching NVIDIA's CDN.
+nvidia-vfx @ https://pypi.nvidia.com/nvidia-vfx/nvidia_vfx-0.1.0.1-cp312-abi3-win_amd64.whl#sha256=b6cfaff5f435ad18329a1e1c1ac3ceb36f2aa6cfb0774d271c0bcc3aeaf31c53

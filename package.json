@@ -1,0 +1,28 @@
+{
+  "name": "digibox-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "DigiBox native Windows desktop shell and runtime bootstrapper",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "vendor:frontend": "node scripts/desktop/vendor_frontend.mjs",
+    "predesktop:dev": "npm run vendor:frontend",
+    "predesktop:pack": "npm run vendor:frontend",
+    "predesktop:dist": "npm run vendor:frontend",
+    "test:desktop": "node --test desktop/test/*.test.cjs",
+    "test:tauri": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File scripts/test_tauri_windows.ps1",
+    "desktop:dev": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File scripts/desktop_dev_windows.ps1 -Shell Electron",
+    "desktop:pack": "electron-builder --dir --win --x64",
+    "desktop:dist": "electron-builder --win nsis --x64",
+    "tauri:dev": "powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File scripts/desktop_dev_windows.ps1 -Shell Tauri",
+    "tauri:build": "tauri build --config src-tauri/tauri.conf.json"
+  },
+  "devDependencies": {
+    "electron": "43.3.0",
+    "electron-builder": "26.15.3",
+    "@tauri-apps/cli": "2.11.1",
+    "htm": "3.1.1",
+    "preact": "10.22.0"
+  }
+}
